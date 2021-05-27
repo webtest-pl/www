@@ -1,9 +1,57 @@
 # www
 Check domains , test connection, screen, 
 
-[github.com/webtest-pl](https://github.com/webtest-pl)
++ [github.com/webtest-pl](https://github.com/webtest-pl)
++ [www.webtest.pl](https://webtest.pl/#/)
 
-[www.webtest.pl](https://webtest.pl/#/)
+
+## TODO:
+
+### check connection status 
++ ping
++ result
+
+### find services, redirections
+
++ http / https
++ * / www.*
++ port:
+    + 3000
+    + 5000
+    + 8080
+    + 80
+    + email ports
+    + sftp, ftp, ssh
+    
+### check type of application
+
++ static
++ dynamic
+    + CMS:
+        + wordpress
+        + drupal
+    + ecommerce
+        + magento
+        + ...
+    + dedicated
+        
+### check technologies
+
+frontend libs/frameworks
++ vue
++ jquery
+
+
+backend
++ php
++ nodejs
++ 
+
+
+
+### frontend third part
++ google
++ amazon
 
 
 
