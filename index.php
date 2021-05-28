@@ -171,7 +171,7 @@ try {
 <div class="container box">
 
     <h2 class="center">WebTest.pl</h2>
-    <p class="center">Test your doimains and webservices</p>
+    <p class="center">Test your domains and webservices worked on</p>
     <hr>
     <form method="post">
         <div class="form-group">
