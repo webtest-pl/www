@@ -161,6 +161,70 @@ try {
         });
     }
 
+
+
+    if (isset($_POST["not_exist"])) {
+
+        load_func([
+            'https://php.letjson.com/let_json.php',
+            'https://php.defjson.com/def_json.php',
+            'https://php.eachfunc.com/each_func.php',
+            'get_domain_by_url.php',
+            'clean_url.php',
+            'clean_url_multiline.php',
+
+        ], function () {
+
+            // Clean URL
+            $domains = clean_url_multiline($_POST["domains"]);
+
+            if (empty($domains)) {
+                throw new Exception("domain list is empty");
+            }
+
+            $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
+
+//        var_dump($domain_list);
+//        die;
+            if (empty($domain_list)) {
+                throw new Exception("domain list is empty");
+            }
+
+            $domain_nameserver_list = each_func($domain_list, function ($url) {
+
+                if (empty($url)) return null;
+
+                $url = clean_url($url);
+
+                if (empty($url)) return null;
+
+                if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
+                    $url = "http://" . $url;
+                }
+
+                $domain = get_domain_by_url($url);
+
+//                $url_status = is_404($url);
+                $url_status = response_status($url);
+
+                return "
+ <div>
+    <p>   
+        <a class='not_exist' href='https://whois.webtest.pl/index.php?domain=$domain' target='_blank'> $domain </a>
+    </p>
+ </div>
+            ";
+            });
+
+            global $html;
+
+            $html = implode("<br>", $domain_nameserver_list);
+//        var_dump($domain_nameserver_list);
+//        var_dump($screen_shot_image);
+
+        });
+    }
+
 } catch (Exception $e) {
     // Set HTTP response status code to: 500 - Internal Server Error
     $html = $e->getMessage();
@@ -243,6 +307,7 @@ function is_404($url)
         <input type="submit" name="multi" value="All" class="btn btn-info btn-lg"/>
         <!--        <input type="submit" name="screen" value="Screenshot" class="btn btn-info btn-lg"/>-->
         <input type="submit" name="dns" value="DNS" class="btn btn-info btn-lg"/>
+        <input type="submit" name="not_exist" value="NOT EXIST" class="btn btn-info btn-lg"/>
     </form>
     <br/>
     <?php
@@ -311,11 +376,24 @@ function is_404($url)
             .done(function (result) {
                 console.log(result);
                 console.log(atext);
-                // var nameservers = JSON.stringify(result.nameserver);
                 console.log(result.status);
-                // alert( "success" );
-                atext.html(result.status);
                 atext.addClass("active");
+                atext.html(result.status);
+            });
+    });
+</script>
+
+
+<script>
+    $('a.not_exist').each(function () {
+        var atext = $(this);
+        var url = atext.attr('href');
+        var jqxhr = $.ajax(url)
+            .done(function (result) {
+                console.log(result.status);
+                if(result.status !== "unknown"){
+                    atext.parent().html("");
+                }
             });
     });
 </script>
