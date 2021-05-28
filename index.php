@@ -1,5 +1,6 @@
 <?php
 // http://localhost:8080/index.php
+error_reporting(E_ERROR | E_PARSE);
 
 require("load_func.php");
 $html = '';
@@ -8,6 +9,7 @@ $html = '';
 if (empty($_POST["domains"])) {
     $_POST["domains"] = "softreck.com";
 }
+
 try {
 
     if (isset($_POST["multi"])) {
@@ -62,6 +64,7 @@ try {
                 return "
  <br><div>
     SCREEN: <a href='$url_screen' target='_blank'> $url</a>
+    <br>
     WEB: <a href='$url' target='_blank'> $url</a>
     <br>
     DNS: <a class='domain' href='https://domain-dns.parkingomat.pl/get.php?domain=$domain' target='_blank'> $domain </a>
@@ -69,7 +72,9 @@ try {
     REG: 
     <a class='registrar' href='https://ap.www.namecheap.com/domains/domaincontrolpanel/$domain/domain' target='_blank'> NAMECHEAP </a>
     <a class='registrar' href='https://premium.pl/ustawienia/$domain' target='_blank'> PREMIUM </a>
-    
+
+    <br>
+
     REG-DNS:
     <a class='registrar' href='https://premium.pl/domain/changens.html?name=$domain&type=domain' target='_blank'> PREMIUM </a>
     <a class='registrar' href='https://www.aftermarket.pl/Domain/NS/?domain=$domain' target='_blank'> AFTERMARKET </a>
@@ -82,9 +87,9 @@ try {
             ";
             });
 
-            global $screen_shot_image;
+            global $html;
 
-            $screen_shot_image = implode("<br>", $domain_nameserver_list);
+            $html = implode("<br>", $domain_nameserver_list);
 //        var_dump($domain_nameserver_list);
 //        var_dump($screen_shot_image);
 
@@ -108,7 +113,7 @@ try {
             $domains = clean_url_multiline($_POST["domains"]);
 
             if (empty($domains)) {
-                throw new Exception("domains is empty");
+                throw new Exception("domain list is empty");
             }
 
             $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
@@ -128,17 +133,21 @@ try {
                 if (empty($url)) return null;
 
                 if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
-                    $url = "https://" . $url;
+                    $url = "http://" . $url;
                 }
 
                 $domain = get_domain_by_url($url);
 
+//                $url_status = is_404($url);
+                $url_status = response_status($url);
+
                 return "
- <br>
  <div>
     <a href='$url' target='_blank'> $domain</a> 
     - 
     <a class='domain' href='https://domain-dns.parkingomat.pl/get.php?domain=$domain' target='_blank'> $domain </a>
+    -
+    <a class='whois' href='https://whois.webtest.pl/index.php?domain=$domain' target='_blank'> $domain </a>
 </div>
             ";
             });
@@ -156,7 +165,58 @@ try {
     // Set HTTP response status code to: 500 - Internal Server Error
     $html = $e->getMessage();
 }
+
+
+function response_status($url)
+{
+    $headers = get_headers($url, 1);
+
+    if (is_array($headers)) {
+        return $headers[0];
+//        return substr($headers[0], 9);
+    }
+
+    return domain_exist($url);
+}
+
+
+function domain_exist($url)
+{
+    $domain = get_domain_by_url($url);
+
+//    if (checkdnsrr($domain , 'ANY')) {
+//    if (gethostbyname($domain) != $domain ) {
+    return gethostbynamel($domain);
+    if (gethostbynamel($domain) != $domain ) {
+        return "DNS Record found";
+    } else {
+        return "NO DNS Record found";
+    }
+}
+
+
+function is_404($url)
+{
+    $handle = curl_init($url);
+    curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
+
+    /* Get the HTML or whatever is linked in $url. */
+    $response = curl_exec($handle);
+
+    /* Check for 404 (file not found). */
+    $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+    curl_close($handle);
+
+    /* If the document has loaded successfully without any redirection or error */
+    if ($httpCode >= 200 && $httpCode < 300) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
 ?>
+
 
 <html>
 <head>
@@ -212,26 +272,22 @@ try {
     </div>
 
     <div>
-        Supported by
-        <a href="https://softreck.com" target='_blank'>softreck.com (global)</a>
+        Supported by:
+        <a href="https://softreck.com" target='_blank'>softreck.com</a>
         |
-        <a href="https://softreck.pl" target='_blank'>softreck.pl (poland)</a>
+        <a href="https://softreck.pl" target='_blank'>softreck.pl</a>
         |
-        <a href="https://www.webstream.dev" target='_blank'>www.webstream.dev</a>
+        <a href="https://www.webstream.dev" target='_blank'>webstream.dev</a>
         |
-        <a href="https://www.apifunc.com" target='_blank'>www.apifunc.com</a>
+        <a href="https://www.apifunc.com" target='_blank'>apifunc.com</a>
 
     </div>
 </div>
 
 <script>
     $('a.domain').each(function () {
-        // var value = $(this).attr('href');
-        // $(this).attr('href', value.replace('#/',''));
         var atext = $(this);
         var url = atext.attr('href');
-        // console.log(domain);
-        // var url = "https://domain-dns.parkingomat.pl/get.php?domain=" + domain;
         var jqxhr = $.ajax(url)
             .done(function (result) {
                 console.log(result);
@@ -241,6 +297,24 @@ try {
                 console.log(nameservers);
                 // alert( "success" );
                 atext.html(nameservers);
+                atext.addClass("active");
+            });
+    });
+</script>
+
+
+<script>
+    $('a.whois').each(function () {
+        var atext = $(this);
+        var url = atext.attr('href');
+        var jqxhr = $.ajax(url)
+            .done(function (result) {
+                console.log(result);
+                console.log(atext);
+                // var nameservers = JSON.stringify(result.nameserver);
+                console.log(result.status);
+                // alert( "success" );
+                atext.html(result.status);
                 atext.addClass("active");
             });
     });

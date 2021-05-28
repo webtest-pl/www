@@ -7,9 +7,18 @@ Check domains , test connection, screen,
 
 ## TODO:
 
-### check connection status 
+### check connection status
+latency.pl
+
 + ping
 + result
+
+
+
+### SSL
++ check if SSL exists?
++ till when is valid?
++ company?
 
 ### find services, redirections
 
