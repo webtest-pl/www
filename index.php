@@ -2,7 +2,7 @@
 // http://localhost:8080/index.php
 
 require("load_func.php");
-$screen_shot_image = '';
+$html = '';
 
 
 if (empty($_POST["domains"])) {
@@ -16,16 +16,13 @@ if (isset($_POST["multi"])) {
         'https://php.defjson.com/def_json.php',
         'https://php.eachfunc.com/each_func.php',
         'get_domain_by_url.php',
+        'clean_url.php',
+        'clean_url_multiline.php',
 
     ], function () {
 
-        $domains = $_POST["domains"];
         // Clean URL
-        $domains = str_replace('"', "", $domains);
-        $domains = str_replace("'", "", $domains);
-        $domains = str_replace(" ", "", $domains);
-        $domains = str_replace(",", "", $domains);
-        $domains = trim($domains);
+        $domains = clean_url_multiline($_POST["domains"]);
 
         if (empty($domains)) {
             throw new Exception("domains is empty");
@@ -43,19 +40,11 @@ if (isset($_POST["multi"])) {
 
             if (empty($url)) return null;
 
-            //$url = str_replace(PHP_EOL, '', $url);
-                
-            $url = trim($url);
-            //$url = rtrim($url, ' ');
-            $url = rtrim($url, '"');
-            $url = rtrim($url, ';');
-            $url = rtrim($url, ',');
-            $url = rtrim($url, '/');
+            $url = clean_url($url);
 
-            
             if (empty($url)) return null;
-            
-            
+
+
             if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
                 $url = "https://" . $url;
             }
@@ -101,29 +90,82 @@ if (isset($_POST["multi"])) {
     });
 }
 
+
+if (isset($_POST["dns"])) {
+
+    load_func([
+        'https://php.letjson.com/let_json.php',
+        'https://php.defjson.com/def_json.php',
+        'https://php.eachfunc.com/each_func.php',
+        'get_domain_by_url.php',
+        'clean_url.php',
+        'clean_url_multiline.php',
+
+    ], function () {
+
+        // Clean URL
+        $domains = clean_url_multiline($_POST["domains"]);
+
+        if (empty($domains)) {
+            throw new Exception("domains is empty");
+        }
+
+        $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
+
+//        var_dump($domain_list);
+//        die;
+        if (empty($domain_list)) {
+            throw new Exception("domain list is empty");
+        }
+
+        $domain_nameserver_list = each_func($domain_list, function ($url) {
+
+            if (empty($url)) return null;
+
+            $url = clean_url($url);
+
+            if (empty($url)) return null;
+
+            if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
+                $url = "https://" . $url;
+            }
+
+            $domain = get_domain_by_url($url);
+
+            return "
+ <br>
+ <div>
+    <a href='$url' target='_blank'> $domain</a> 
+    - 
+    <a class='domain' href='https://domain-dns.parkingomat.pl/get.php?domain=$domain' target='_blank'> $domain </a>
+</div>
+            ";
+        });
+
+        global $html;
+
+        $html = implode("<br>", $domain_nameserver_list);
+//        var_dump($domain_nameserver_list);
+//        var_dump($screen_shot_image);
+
+    });
+}
+
+
 ?>
 
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>How to capture website screen shot from url in php</title>
-    
+    <title>Test Your Website with screen-shot from url</title>
+
     <script src="//ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
-    <style>
-        .box {
-            width: 100%;
-            max-width: 720px;
-            margin: 0 auto;
-        }
-    </style>
-
 </head>
 <body>
 <div class="container box">
-    <a href="http://webscreen.pl:3000/remove/png" target='_blank'> remove png </a>
-     <a href="http://webscreen.pl:3000/remove/txt" target='_blank'> remove txt </a>
+
     <br/>
     <h2 align="center">capture website screen shot</h2><br/>
     <form method="post">
@@ -134,13 +176,13 @@ if (isset($_POST["multi"])) {
             <textarea name="domains" cols="55" rows="20"><?php echo $_POST["domains"] ?></textarea>
         </div>
         <br/>
-        <input type="submit" name="multi" value="Take a Screenshot" class="btn btn-info btn-lg"/>
+        <input type="submit" name="multi" value="All" class="btn btn-info btn-lg"/>
+        <!--        <input type="submit" name="screen" value="Screenshot" class="btn btn-info btn-lg"/>-->
+        <input type="submit" name="dns" value="DNS" class="btn btn-info btn-lg"/>
     </form>
     <br/>
     <?php
-
-    echo $screen_shot_image;
-
+    echo $html;
     ?>
 </div>
 <div style="clear:both"></div>
@@ -149,6 +191,26 @@ if (isset($_POST["multi"])) {
 <br/>
 <br/>
 <br/>
+<hr>
+<div class="center">
+    <div>
+        API:
+        <a href="http://webscreen.pl:3000/remove/png" target='_blank'> remove png </a>
+        |
+        <a href="http://webscreen.pl:3000/remove/txt" target='_blank'> remove txt </a>
+
+    </div>
+
+    <div>
+        DEV:
+        <a href="https://github.com/webtest-pl/www" target='_blank'>source code</a>
+        |
+        <a href="https://webtest.pl/" target='_blank'> production </a>
+        |
+        <a href="http://localhost:8080/" target='_blank'> localhost </a>
+
+    </div>
+</div>
 
 <script>
     $('a.domain').each(function () {
@@ -166,7 +228,7 @@ if (isset($_POST["multi"])) {
                 var nameservers = result.nameserver.join(", ");
                 console.log(nameservers);
                 // alert( "success" );
-                atext.html( nameservers );
+                atext.html(nameservers);
                 atext.addClass("active");
             });
     });
@@ -182,13 +244,31 @@ if (isset($_POST["multi"])) {
         color: #222333;
         text-decoration: none;
     }
+
     img.img-thumbnail {
-        height:300px;
+        height: 300px;
     }
+
     iframe {
-        height:300px;
-        width:600px;
+        height: 300px;
+        width: 600px;
     }
+
+    .box {
+        width: 100%;
+        max-width: 720px;
+        margin: 0 auto;
+    }
+
+    .center {
+        margin: auto;
+        max-width: 720px;
+    }
+
+    .center div {
+    }
+
+
 </style>
 </body>
 </html>
