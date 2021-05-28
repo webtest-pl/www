@@ -157,7 +157,7 @@ if (isset($_POST["dns"])) {
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Test Your Website with screen-shot from url</title>
+    <title>Test Your domains list</title>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
@@ -166,12 +166,12 @@ if (isset($_POST["dns"])) {
 <body>
 <div class="container box">
 
-    <br/>
-    <h2 align="center">capture website screen shot</h2><br/>
+    <h2 class="center">WebTest.pl</h2>
+    <p class="center">Test your doimains and webservices</p>
+    <hr>
     <form method="post">
-
         <div class="form-group">
-            <label>Enter Domain name</label>
+            <label>Enter domain names, line by line</label>
             <br>
             <textarea name="domains" cols="55" rows="20"><?php echo $_POST["domains"] ?></textarea>
         </div>
@@ -187,14 +187,10 @@ if (isset($_POST["dns"])) {
 </div>
 <div style="clear:both"></div>
 <br/>
-
-<br/>
-<br/>
-<br/>
 <hr>
 <div class="center">
     <div>
-        API:
+        API webscreen:
         <a href="http://webscreen.pl:3000/remove/png" target='_blank'> remove png </a>
         |
         <a href="http://webscreen.pl:3000/remove/txt" target='_blank'> remove txt </a>
