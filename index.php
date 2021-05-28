@@ -8,57 +8,58 @@ $html = '';
 if (empty($_POST["domains"])) {
     $_POST["domains"] = "softreck.com";
 }
+try {
 
-if (isset($_POST["multi"])) {
+    if (isset($_POST["multi"])) {
 
-    load_func([
-        'https://php.letjson.com/let_json.php',
-        'https://php.defjson.com/def_json.php',
-        'https://php.eachfunc.com/each_func.php',
-        'get_domain_by_url.php',
-        'clean_url.php',
-        'clean_url_multiline.php',
+        load_func([
+            'https://php.letjson.com/let_json.php',
+            'https://php.defjson.com/def_json.php',
+            'https://php.eachfunc.com/each_func.php',
+            'get_domain_by_url.php',
+            'clean_url.php',
+            'clean_url_multiline.php',
 
-    ], function () {
+        ], function () {
 
-        // Clean URL
-        $domains = clean_url_multiline($_POST["domains"]);
+            // Clean URL
+            $domains = clean_url_multiline($_POST["domains"]);
 
-        if (empty($domains)) {
-            throw new Exception("domains is empty");
-        }
+            if (empty($domains)) {
+                throw new Exception("domains is empty");
+            }
 
-        $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
+            $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
 
 //        var_dump($domain_list);
 //        die;
-        if (empty($domain_list)) {
-            throw new Exception("domain list is empty");
-        }
-
-        $domain_nameserver_list = each_func($domain_list, function ($url) {
-
-            if (empty($url)) return null;
-
-            $url = clean_url($url);
-
-            if (empty($url)) return null;
-
-
-            if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
-                $url = "https://" . $url;
+            if (empty($domain_list)) {
+                throw new Exception("domain list is empty");
             }
+
+            $domain_nameserver_list = each_func($domain_list, function ($url) {
+
+                if (empty($url)) return null;
+
+                $url = clean_url($url);
+
+                if (empty($url)) return null;
+
+
+                if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
+                    $url = "https://" . $url;
+                }
 
 //            if(!(strpos( $url, "https://" ) === 0)){
 //                $url = "https://" . $url
 //            }
 
-            $urle = urlencode($url);
-            $url_screen = "http://webscreen.pl:3000/url/{$urle}";
+                $urle = urlencode($url);
+                $url_screen = "http://webscreen.pl:3000/url/{$urle}";
 //            var_dump($url_screen);
-            $domain = get_domain_by_url($url);
+                $domain = get_domain_by_url($url);
 
-            return "
+                return "
  <br><div>
     SCREEN: <a href='$url_screen' target='_blank'> $url</a>
     WEB: <a href='$url' target='_blank'> $url</a>
@@ -79,60 +80,60 @@ if (isset($_POST["multi"])) {
     <iframe src='$url' title='$domain'></iframe> 
 </div>
             ";
-        });
+            });
 
-        global $screen_shot_image;
+            global $screen_shot_image;
 
-        $screen_shot_image = implode("<br>", $domain_nameserver_list);
+            $screen_shot_image = implode("<br>", $domain_nameserver_list);
 //        var_dump($domain_nameserver_list);
 //        var_dump($screen_shot_image);
 
-    });
-}
+        });
+    }
 
 
-if (isset($_POST["dns"])) {
+    if (isset($_POST["dns"])) {
 
-    load_func([
-        'https://php.letjson.com/let_json.php',
-        'https://php.defjson.com/def_json.php',
-        'https://php.eachfunc.com/each_func.php',
-        'get_domain_by_url.php',
-        'clean_url.php',
-        'clean_url_multiline.php',
+        load_func([
+            'https://php.letjson.com/let_json.php',
+            'https://php.defjson.com/def_json.php',
+            'https://php.eachfunc.com/each_func.php',
+            'get_domain_by_url.php',
+            'clean_url.php',
+            'clean_url_multiline.php',
 
-    ], function () {
+        ], function () {
 
-        // Clean URL
-        $domains = clean_url_multiline($_POST["domains"]);
+            // Clean URL
+            $domains = clean_url_multiline($_POST["domains"]);
 
-        if (empty($domains)) {
-            throw new Exception("domains is empty");
-        }
+            if (empty($domains)) {
+                throw new Exception("domains is empty");
+            }
 
-        $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
+            $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
 
 //        var_dump($domain_list);
 //        die;
-        if (empty($domain_list)) {
-            throw new Exception("domain list is empty");
-        }
-
-        $domain_nameserver_list = each_func($domain_list, function ($url) {
-
-            if (empty($url)) return null;
-
-            $url = clean_url($url);
-
-            if (empty($url)) return null;
-
-            if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
-                $url = "https://" . $url;
+            if (empty($domain_list)) {
+                throw new Exception("domain list is empty");
             }
 
-            $domain = get_domain_by_url($url);
+            $domain_nameserver_list = each_func($domain_list, function ($url) {
 
-            return "
+                if (empty($url)) return null;
+
+                $url = clean_url($url);
+
+                if (empty($url)) return null;
+
+                if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
+                    $url = "https://" . $url;
+                }
+
+                $domain = get_domain_by_url($url);
+
+                return "
  <br>
  <div>
     <a href='$url' target='_blank'> $domain</a> 
@@ -140,18 +141,21 @@ if (isset($_POST["dns"])) {
     <a class='domain' href='https://domain-dns.parkingomat.pl/get.php?domain=$domain' target='_blank'> $domain </a>
 </div>
             ";
-        });
+            });
 
-        global $html;
+            global $html;
 
-        $html = implode("<br>", $domain_nameserver_list);
+            $html = implode("<br>", $domain_nameserver_list);
 //        var_dump($domain_nameserver_list);
 //        var_dump($screen_shot_image);
 
-    });
+        });
+    }
+
+} catch (Exception $e) {
+    // Set HTTP response status code to: 500 - Internal Server Error
+    $html = $e->getMessage();
 }
-
-
 ?>
 
 <html>
@@ -204,6 +208,18 @@ if (isset($_POST["dns"])) {
         <a href="https://webtest.pl/" target='_blank'> production </a>
         |
         <a href="http://localhost:8080/" target='_blank'> localhost </a>
+
+    </div>
+
+    <div>
+        Supported by
+        <a href="https://softreck.com" target='_blank'>softreck.com (global)</a>
+        |
+        <a href="https://softreck.pl" target='_blank'>softreck.pl (poland)</a>
+        |
+        <a href="https://www.webstream.dev" target='_blank'>www.webstream.dev</a>
+        |
+        <a href="https://www.apifunc.com" target='_blank'>www.apifunc.com</a>
 
     </div>
 </div>
