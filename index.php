@@ -67,7 +67,7 @@ try {
     <br>
     WEB: <a href='$url' target='_blank'> $url</a>
     <br>
-    DNS: <a class='domain' href='https://domain-dns.parkingomat.pl/get.php?domain=$domain' target='_blank'> $domain </a>
+    DNS: <a class='dns' href='https://domain-dns.parkingomat.pl/get.php?domain=$domain' target='_blank'> $domain </a>
     <br>
     REG: 
     <a class='registrar' href='https://ap.www.namecheap.com/domains/domaincontrolpanel/$domain/domain' target='_blank'> NAMECHEAP </a>
@@ -145,9 +145,136 @@ try {
  <div>
     <a href='$url' target='_blank'> $domain</a> 
     - 
-    <a class='domain' href='https://domain-dns.parkingomat.pl/get.php?domain=$domain' target='_blank'> $domain </a>
+    <a class='dns' href='https://domain-dns.parkingomat.pl/get.php?domain=$domain' target='_blank'> $domain </a>
+</div>
+            ";
+            });
+
+            global $html;
+
+            $html = implode("<br>", $domain_nameserver_list);
+//        var_dump($domain_nameserver_list);
+//        var_dump($screen_shot_image);
+
+        });
+    }
+
+    if (isset($_POST["registered"])) {
+
+        load_func([
+            'https://php.letjson.com/let_json.php',
+            'https://php.defjson.com/def_json.php',
+            'https://php.eachfunc.com/each_func.php',
+            'get_domain_by_url.php',
+            'clean_url.php',
+            'clean_url_multiline.php',
+
+        ], function () {
+
+            // Clean URL
+            $domains = clean_url_multiline($_POST["domains"]);
+
+            if (empty($domains)) {
+                throw new Exception("domain list is empty");
+            }
+
+            $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
+
+//        var_dump($domain_list);
+//        die;
+            if (empty($domain_list)) {
+                throw new Exception("domain list is empty");
+            }
+
+            $domain_nameserver_list = each_func($domain_list, function ($url) {
+
+                if (empty($url)) return null;
+
+                $url = clean_url($url);
+
+                if (empty($url)) return null;
+
+                if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
+                    $url = "http://" . $url;
+                }
+
+                $domain = get_domain_by_url($url);
+
+//                $url_status = is_404($url);
+                $url_status = response_status($url);
+
+                return "
+ <div>
+    <a href='$url' target='_blank'> $domain</a> 
+    - 
+    <a class='dns' href='https://domain-dns.parkingomat.pl/get.php?domain=$domain' target='_blank'> $domain </a>
     -
-    <a class='whois' href='https://whois.webtest.pl/index.php?domain=$domain' target='_blank'> $domain </a>
+    <a class='registered' href='https://www.wolnadomena.pl/registered.php?domain=$domain' target='_blank'> $domain </a>
+</div>
+            ";
+            });
+
+            global $html;
+
+            $html = implode("<br>", $domain_nameserver_list);
+//        var_dump($domain_nameserver_list);
+//        var_dump($screen_shot_image);
+
+        });
+    }
+
+
+
+
+    if (isset($_POST["whois"])) {
+
+        load_func([
+            'https://php.letjson.com/let_json.php',
+            'https://php.defjson.com/def_json.php',
+            'https://php.eachfunc.com/each_func.php',
+            'get_domain_by_url.php',
+            'clean_url.php',
+            'clean_url_multiline.php',
+
+        ], function () {
+
+            // Clean URL
+            $domains = clean_url_multiline($_POST["domains"]);
+
+            if (empty($domains)) {
+                throw new Exception("domain list is empty");
+            }
+
+            $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
+
+//        var_dump($domain_list);
+//        die;
+            if (empty($domain_list)) {
+                throw new Exception("domain list is empty");
+            }
+
+            $domain_nameserver_list = each_func($domain_list, function ($url) {
+
+                if (empty($url)) return null;
+
+                $url = clean_url($url);
+
+                if (empty($url)) return null;
+
+                if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
+                    $url = "http://" . $url;
+                }
+
+                $domain = get_domain_by_url($url);
+
+//                $url_status = is_404($url);
+                $url_status = response_status($url);
+
+                return "
+ <div>
+    <a href='$url' target='_blank'> $domain</a> 
+    -
+    <a class='whois' href='https://www.wolnadomena.pl/whois.php?domain=$domain' target='_blank'> $domain </a>
 </div>
             ";
             });
@@ -307,6 +434,8 @@ function is_404($url)
         <input type="submit" name="multi" value="All" class="btn btn-info btn-lg"/>
         <!--        <input type="submit" name="screen" value="Screenshot" class="btn btn-info btn-lg"/>-->
         <input type="submit" name="dns" value="DNS" class="btn btn-info btn-lg"/>
+        <input type="submit" name="whois" value="WHOIS" class="btn btn-info btn-lg"/>
+        <input type="submit" name="registered" value="REGISTERED" class="btn btn-info btn-lg"/>
         <input type="submit" name="not_exist" value="NOT EXIST" class="btn btn-info btn-lg"/>
     </form>
     <br/>
@@ -350,7 +479,7 @@ function is_404($url)
 </div>
 
 <script>
-    $('a.domain').each(function () {
+    $('a.dns').each(function () {
         var atext = $(this);
         var url = atext.attr('href');
         var jqxhr = $.ajax(url)
@@ -363,6 +492,22 @@ function is_404($url)
                 // alert( "success" );
                 atext.html(nameservers);
                 atext.addClass("active");
+            });
+    });
+</script>
+
+
+<script>
+    $('a.registered').each(function () {
+        var atext = $(this);
+        var url = atext.attr('href');
+        var jqxhr = $.ajax(url)
+            .done(function (result) {
+                console.log(result);
+                console.log(atext);
+                console.log(result.status);
+                atext.addClass("active");
+                atext.html(result.status);
             });
     });
 </script>
