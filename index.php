@@ -203,11 +203,10 @@ try {
 //                $url_status = is_404($url);
                 $url_status = response_status($url);
 
+
                 return "
  <div>
     <a href='$url' target='_blank'> $domain</a> 
-    - 
-    <a class='dns' href='https://domain-dns.parkingomat.pl/get.php?domain=$domain' target='_blank'> $domain </a>
     -
     <a class='registered' href='https://www.wolnadomena.pl/registered.php?domain=$domain' target='_blank'> $domain </a>
 </div>
@@ -267,14 +266,11 @@ try {
 
                 $domain = get_domain_by_url($url);
 
-//                $url_status = is_404($url);
-                $url_status = response_status($url);
-
                 return "
  <div>
     <a href='$url' target='_blank'> $domain</a> 
     -
-    <a class='whois' href='https://www.wolnadomena.pl/whois.php?domain=$domain' target='_blank'> $domain </a>
+    <a class='whois' href='https://www.wolnadomena.pl/whois.php?domain=$domain' target='_blank'> - </a>
 </div>
             ";
             });
@@ -287,6 +283,8 @@ try {
 
         });
     }
+
+
 
 
 
@@ -436,7 +434,7 @@ function is_404($url)
         <input type="submit" name="dns" value="DNS" class="btn btn-info btn-lg"/>
         <input type="submit" name="whois" value="WHOIS" class="btn btn-info btn-lg"/>
         <input type="submit" name="registered" value="REGISTERED" class="btn btn-info btn-lg"/>
-        <input type="submit" name="not_exist" value="NOT EXIST" class="btn btn-info btn-lg"/>
+<!--        <input type="submit" name="not_exist" value="NOT EXIST" class="btn btn-info btn-lg"/>-->
     </form>
     <br/>
     <?php
@@ -497,21 +495,6 @@ function is_404($url)
 </script>
 
 
-<script>
-    $('a.registered').each(function () {
-        var atext = $(this);
-        var url = atext.attr('href');
-        var jqxhr = $.ajax(url)
-            .done(function (result) {
-                console.log(result);
-                console.log(atext);
-                console.log(result.status);
-                atext.addClass("active");
-                atext.html(result.status);
-            });
-    });
-</script>
-
 
 <script>
     $('a.whois').each(function () {
@@ -521,26 +504,52 @@ function is_404($url)
             .done(function (result) {
                 console.log(result);
                 console.log(atext);
-                console.log(result.status);
+                var info = result.whois.domain;
+                console.log(info);
+
+                // var whois = Object.keys(info).join(',');
+                var whois = '';
+                if ("undefined" !== typeof result.whois.domain.name) whois += result.whois.domain.name + '<br>';
+                if ("undefined" !== typeof result.whois.domain.expires) whois += result.whois.domain.expires + '<br>';
+                if ("undefined" !== typeof result.whois.domain.created) whois += result.whois.domain.created + '<br>';
+                if ("undefined" !== typeof result.whois.domain.status) whois += Object.values(result.whois.domain.status).join('<br>');
+                if ("undefined" !== typeof result.whois.domain.sponsor)  whois += Object.values(result.whois.domain.sponsor).join('<br>');
+                console.log(whois);
+
                 atext.addClass("active");
-                atext.html(result.status);
+                atext.html(whois);
             });
     });
 </script>
 
 
 <script>
-    $('a.not_exist').each(function () {
+    $('a.registered').each(function () {
         var atext = $(this);
         var url = atext.attr('href');
         var jqxhr = $.ajax(url)
             .done(function (result) {
-                console.log(result.status);
-                if(result.status !== "unknown"){
-                    atext.parent().html("");
-                }
+                console.log(result);
+                console.log(atext);
+                console.log(result.registered);
+                atext.addClass("active");
+                atext.html(result.registered);
             });
     });
+</script>
+
+<script>
+    // $('a.not_exist').each(function () {
+    //     var atext = $(this);
+    //     var url = atext.attr('href');
+    //     var jqxhr = $.ajax(url)
+    //         .done(function (result) {
+    //             console.log(result.status);
+    //             if(result.status !== "unknown"){
+    //                 atext.parent().html("");
+    //             }
+    //         });
+    // });
 </script>
 
 <style>
