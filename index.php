@@ -142,7 +142,7 @@ try {
  <div>
     <a href='$url' target='_blank'> $domain</a> 
     - 
-    <a class='dns' href='https://domain-dns.parkingomat.pl/get.php?domain=$domain' target='_blank'> $domain </a>
+    <a class='dns' href='https://domain-dns.parkingomat.pl/get.php?domain=$domain' target='_blank'> - </a>
 </div>
             ";
             });
@@ -201,7 +201,7 @@ try {
  <div>
     <a href='$url' target='_blank'> $domain</a> 
     -
-    <a class='registered' href='https://www.wolnadomena.pl/registered.php?domain=$domain' target='_blank'> $domain </a>
+    <a class='registered' href='https://www.wolnadomena.pl/registered.php?domain=$domain' target='_blank'> - </a>
 </div>
             ";
             });
@@ -378,7 +378,7 @@ try {
  <div>
     <a href='$url' target='_blank'> $domain</a> 
     -
-    <a class='latency' href='https://www.latency.pl/latency.php?domain=$domain' target='_blank'> $domain </a>
+    <a class='latency' href='https://www.latency.pl/latency.php?domain=$domain' target='_blank'> - </a>
 </div>
             ";
             });
