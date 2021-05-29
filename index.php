@@ -18,9 +18,9 @@ try {
             'https://php.letjson.com/let_json.php',
             'https://php.defjson.com/def_json.php',
             'https://php.eachfunc.com/each_func.php',
-            'get_domain_by_url.php',
-            'clean_url.php',
-            'clean_url_multiline.php',
+            'https://domain.phpfunc.com/get_domain_by_url.php',
+            'https://domain.phpfunc.com/clean_url.php',
+            'https://domain.phpfunc.com/clean_url_multiline.php',
 
         ], function () {
 
@@ -103,9 +103,9 @@ try {
             'https://php.letjson.com/let_json.php',
             'https://php.defjson.com/def_json.php',
             'https://php.eachfunc.com/each_func.php',
-            'get_domain_by_url.php',
-            'clean_url.php',
-            'clean_url_multiline.php',
+            'https://domain.phpfunc.com/get_domain_by_url.php',
+            'https://domain.phpfunc.com/clean_url.php',
+            'https://domain.phpfunc.com/clean_url_multiline.php',
 
         ], function () {
 
@@ -137,9 +137,6 @@ try {
                 }
 
                 $domain = get_domain_by_url($url);
-
-//                $url_status = is_404($url);
-                $url_status = response_status($url);
 
                 return "
  <div>
@@ -165,9 +162,9 @@ try {
             'https://php.letjson.com/let_json.php',
             'https://php.defjson.com/def_json.php',
             'https://php.eachfunc.com/each_func.php',
-            'get_domain_by_url.php',
-            'clean_url.php',
-            'clean_url_multiline.php',
+            'https://domain.phpfunc.com/get_domain_by_url.php',
+            'https://domain.phpfunc.com/clean_url.php',
+            'https://domain.phpfunc.com/clean_url_multiline.php',
 
         ], function () {
 
@@ -199,10 +196,6 @@ try {
                 }
 
                 $domain = get_domain_by_url($url);
-
-//                $url_status = is_404($url);
-                $url_status = response_status($url);
-
 
                 return "
  <div>
@@ -231,9 +224,9 @@ try {
             'https://php.letjson.com/let_json.php',
             'https://php.defjson.com/def_json.php',
             'https://php.eachfunc.com/each_func.php',
-            'get_domain_by_url.php',
-            'clean_url.php',
-            'clean_url_multiline.php',
+            'https://domain.phpfunc.com/get_domain_by_url.php',
+            'https://domain.phpfunc.com/clean_url.php',
+            'https://domain.phpfunc.com/clean_url_multiline.php',
 
         ], function () {
 
@@ -278,25 +271,20 @@ try {
             global $html;
 
             $html = implode("<br>", $domain_nameserver_list);
-//        var_dump($domain_nameserver_list);
-//        var_dump($screen_shot_image);
-
         });
     }
 
 
 
-
-
-    if (isset($_POST["not_exist"])) {
+    if (isset($_POST["whois"])) {
 
         load_func([
             'https://php.letjson.com/let_json.php',
             'https://php.defjson.com/def_json.php',
             'https://php.eachfunc.com/each_func.php',
-            'get_domain_by_url.php',
-            'clean_url.php',
-            'clean_url_multiline.php',
+            'https://domain.phpfunc.com/get_domain_by_url.php',
+            'https://domain.phpfunc.com/clean_url.php',
+            'https://domain.phpfunc.com/clean_url_multiline.php',
 
         ], function () {
 
@@ -329,8 +317,119 @@ try {
 
                 $domain = get_domain_by_url($url);
 
-//                $url_status = is_404($url);
-                $url_status = response_status($url);
+                return "
+ <div>
+    <a href='$url' target='_blank'> $domain</a> 
+    -
+    <a class='whois' href='https://www.wolnadomena.pl/whois.php?domain=$domain' target='_blank'> - </a>
+</div>
+            ";
+            });
+
+            global $html;
+
+            $html = implode("<br>", $domain_nameserver_list);
+        });
+    }
+
+
+
+    if (isset($_POST["latency"])) {
+
+        load_func([
+            'https://php.letjson.com/let_json.php',
+            'https://php.defjson.com/def_json.php',
+            'https://php.eachfunc.com/each_func.php',
+            'https://domain.phpfunc.com/get_domain_by_url.php',
+            'https://domain.phpfunc.com/clean_url.php',
+            'https://domain.phpfunc.com/clean_url_multiline.php',
+        ], function () {
+
+            // Clean URL
+            $domains = clean_url_multiline($_POST["domains"]);
+
+            if (empty($domains)) {
+                throw new Exception("domain list is empty");
+            }
+
+            $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
+
+//        var_dump($domain_list);
+//        die;
+            if (empty($domain_list)) {
+                throw new Exception("domain list is empty");
+            }
+
+            $domain_nameserver_list = each_func($domain_list, function ($url) {
+
+                if (empty($url)) return null;
+
+                $url = clean_url($url);
+
+                if (empty($url)) return null;
+
+                if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
+                    $url = "http://" . $url;
+                }
+
+                $domain = get_domain_by_url($url);
+
+                return "
+ <div>
+    <a href='$url' target='_blank'> $domain</a> 
+    -
+    <a class='latency' href='https://www.latency.pl/latency.php?domain=$domain' target='_blank'> $domain </a>
+</div>
+            ";
+            });
+
+            global $html;
+
+            $html = implode("<br>", $domain_nameserver_list);
+
+        });
+    }
+
+    if (isset($_POST["not_exist"])) {
+
+        load_func([
+            'https://php.letjson.com/let_json.php',
+            'https://php.defjson.com/def_json.php',
+            'https://php.eachfunc.com/each_func.php',
+            'https://domain.phpfunc.com/get_domain_by_url.php',
+            'https://domain.phpfunc.com/clean_url.php',
+            'https://domain.phpfunc.com/clean_url_multiline.php',
+
+        ], function () {
+
+            // Clean URL
+            $domains = clean_url_multiline($_POST["domains"]);
+
+            if (empty($domains)) {
+                throw new Exception("domain list is empty");
+            }
+
+            $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
+
+//        var_dump($domain_list);
+//        die;
+            if (empty($domain_list)) {
+                throw new Exception("domain list is empty");
+            }
+
+            $domain_nameserver_list = each_func($domain_list, function ($url) {
+
+                if (empty($url)) return null;
+
+                $url = clean_url($url);
+
+                if (empty($url)) return null;
+
+                if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
+                    $url = "http://" . $url;
+                }
+
+                $domain = get_domain_by_url($url);
 
                 return "
  <div>
@@ -344,8 +443,6 @@ try {
             global $html;
 
             $html = implode("<br>", $domain_nameserver_list);
-//        var_dump($domain_nameserver_list);
-//        var_dump($screen_shot_image);
 
         });
     }
@@ -356,53 +453,7 @@ try {
 }
 
 
-function response_status($url)
-{
-    $headers = get_headers($url, 1);
 
-    if (is_array($headers)) {
-        return $headers[0];
-//        return substr($headers[0], 9);
-    }
-
-    return domain_exist($url);
-}
-
-
-function domain_exist($url)
-{
-    $domain = get_domain_by_url($url);
-
-//    if (checkdnsrr($domain , 'ANY')) {
-//    if (gethostbyname($domain) != $domain ) {
-    return gethostbynamel($domain);
-    if (gethostbynamel($domain) != $domain ) {
-        return "DNS Record found";
-    } else {
-        return "NO DNS Record found";
-    }
-}
-
-
-function is_404($url)
-{
-    $handle = curl_init($url);
-    curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
-
-    /* Get the HTML or whatever is linked in $url. */
-    $response = curl_exec($handle);
-
-    /* Check for 404 (file not found). */
-    $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
-    curl_close($handle);
-
-    /* If the document has loaded successfully without any redirection or error */
-    if ($httpCode >= 200 && $httpCode < 300) {
-        return false;
-    } else {
-        return true;
-    }
-}
 
 ?>
 
@@ -434,6 +485,7 @@ function is_404($url)
         <input type="submit" name="dns" value="DNS" class="btn btn-info btn-lg"/>
         <input type="submit" name="whois" value="WHOIS" class="btn btn-info btn-lg"/>
         <input type="submit" name="registered" value="REGISTERED" class="btn btn-info btn-lg"/>
+        <input type="submit" name="latency" value="LATENCY" class="btn btn-info btn-lg"/>
 <!--        <input type="submit" name="not_exist" value="NOT EXIST" class="btn btn-info btn-lg"/>-->
     </form>
     <br/>
@@ -534,6 +586,22 @@ function is_404($url)
                 console.log(result.registered);
                 atext.addClass("active");
                 atext.html(result.registered);
+            });
+    });
+</script>
+
+
+<script>
+    $('a.latency').each(function () {
+        var atext = $(this);
+        var url = atext.attr('href');
+        var jqxhr = $.ajax(url)
+            .done(function (result) {
+                console.log(result);
+                console.log(atext);
+                console.log(result.ping);
+                atext.addClass("active");
+                atext.html(result.ping);
             });
     });
 </script>
