@@ -1,8 +1,13 @@
 # www
-Check domains , test connection, screen, 
+Test domains, websites & webservices
++ whois data
++ screenshot
++ dns nameserver
++ latency, ping
+
 
 + [github.com/webtest-pl](https://github.com/webtest-pl)
-+ [www.webtest.pl](https://webtest.pl/#/)
++ [www.webtest.pl](https://webtest.pl/)
 
 
 # First Steps
@@ -92,18 +97,6 @@ Included Projects:
 + admin.*, script manager
 + edit.*, file manager
 
-[edit](https://github.com/webtest-pl/www/edit/main/README.md)
-
-+ based on parkingomat
-
-https://domain-screen.parkingomat.pl/
-
-
-php read
-
-+ [Check screen for domain list - info about project](https://domain-screen.parkingomat.pl/)
-
-+ [Check screen for domain list - GET request](https://domain-screen.parkingomat.pl/index.php)
 
 
 ## github
@@ -149,3 +142,7 @@ http://webscreen.pl:3000/remove/png
 
 
 http://webscreen.pl:3000/remove/txt
+
+
+---
++ [edit](https://github.com/webtest-pl/www/edit/main/README.md)

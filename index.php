@@ -11,7 +11,7 @@ require("post.php");
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 <!--    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'">-->
 
-    <title>WebTest.pl - Test Your domains list</title>
+    <title>WebTest.pl - Let's test Your domains</title>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
@@ -23,7 +23,7 @@ require("post.php");
 <div class="container box">
 
     <h1 class="center">WebTest.pl</h1>
-    <p class="center">Test your domains and webservices worked on</p>
+    <p class="center">Test domains, websites & webservices</p>
     <hr>
     <form method="post">
         <div class="form-group">

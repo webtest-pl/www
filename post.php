@@ -402,8 +402,6 @@ try {
 
             $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
 
-//        var_dump($domain_list);
-//        die;
             if (empty($domain_list)) {
                 throw new Exception("domain list is empty");
             }
