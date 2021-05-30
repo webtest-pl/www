@@ -5,15 +5,28 @@ Check domains , test connection, screen,
 + [www.webtest.pl](https://webtest.pl/#/)
 
 
-## TODO:
+# First Steps
 
-### check connection status
-latency.pl
+## on linux
 
-+ ping
-+ result
+### install
+    sh .apicra\install.sh
 
+### start
+    sh .apicra\start.sh
 
+## on windows
+
+### install
+    .apicra\install.bat
+
+### start
+    .apicra\start.bat
+
+### tests
+    .apicra\test.bat
+
+# TODO:
 
 ### SSL
 + check if SSL exists?
