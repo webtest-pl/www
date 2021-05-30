@@ -209,9 +209,6 @@ try {
             global $html;
 
             $html = implode("<br>", $domain_nameserver_list);
-//        var_dump($domain_nameserver_list);
-//        var_dump($screen_shot_image);
-
         });
     }
 
@@ -297,8 +294,6 @@ try {
 
             $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
 
-//        var_dump($domain_list);
-//        die;
             if (empty($domain_list)) {
                 throw new Exception("domain list is empty");
             }
@@ -321,7 +316,7 @@ try {
  <div>
     <a href='$url' target='_blank'> $domain</a> 
     -
-    <a class='whois' href='https://www.wolnadomena.pl/whois.php?domain=$domain' target='_blank'> - </a>
+    <a class='whois' href='https://whois.wolnadomena.pl/whois.php?domain=$domain' target='_blank'> - </a>
 </div>
             ";
             });
@@ -452,9 +447,6 @@ try {
     $html = $e->getMessage();
 }
 
-
-
-
 ?>
 
 
@@ -511,7 +503,7 @@ try {
         DEV:
         <a href="https://github.com/webtest-pl/www" target='_blank'>source code</a>
         |
-        <a href="https://webtest.pl/" target='_blank'> production </a>
+        <a href="https://www.webtest.pl/" target='_blank'> production </a>
         |
         <a href="http://localhost:8080/" target='_blank'> localhost </a>
 
