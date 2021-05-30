@@ -12,54 +12,107 @@ if (empty($_POST["domains"])) {
 
 try {
 
-    if (isset($_POST["multi"])) {
+    apifunc([
+        'https://php.letjson.com/let_json.php',
+        'https://php.defjson.com/def_json.php',
+        'https://php.eachfunc.com/each_func.php',
+        'https://domain.phpfunc.com/get_domain_by_url.php',
+        'https://domain.phpfunc.com/clean_url.php',
+        'https://domain.phpfunc.com/clean_url_multiline.php',
+    ], function () {
 
-        apifunc([
-            'https://php.letjson.com/let_json.php',
-            'https://php.defjson.com/def_json.php',
-            'https://php.eachfunc.com/each_func.php',
-            'https://domain.phpfunc.com/get_domain_by_url.php',
-            'https://domain.phpfunc.com/clean_url.php',
-            'https://domain.phpfunc.com/clean_url_multiline.php',
+        // Clean URL
+        $domains = clean_url_multiline($_POST["domains"]);
 
-        ], function () {
+        if (empty($domains)) {
+            throw new Exception("domain list is empty");
+        }
 
-            // Clean URL
-            $domains = clean_url_multiline($_POST["domains"]);
-
-            if (empty($domains)) {
-                throw new Exception("domains is empty");
-            }
-
-            $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
+        $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
 
 //        var_dump($domain_list);
 //        die;
-            if (empty($domain_list)) {
-                throw new Exception("domain list is empty");
+        if (empty($domain_list)) {
+            throw new Exception("domain list is empty");
+        }
+
+        $domain_nameserver_list = each_func($domain_list, function ($url) {
+
+            if (empty($url)) return null;
+
+            $url = clean_url($url);
+
+            if (empty($url)) return null;
+
+            if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
+                $url = "http://" . $url;
             }
 
-            $domain_nameserver_list = each_func($domain_list, function ($url) {
+            $domain = get_domain_by_url($url);
 
-                if (empty($url)) return null;
+            if (isset($_POST["latency"])) {
 
-                $url = clean_url($url);
+                return "
+ <div>
+    <a href='$url' target='_blank'> $domain</a> 
+    -
+    <a class='latency' href='https://www.latency.pl/latency.php?domain=$domain' target='_blank'> - </a>
+</div>
+            ";
 
-                if (empty($url)) return null;
+            } else if (isset($_POST["not_exist"])) {
+
+                return "
+ <div>
+    <p>   
+        <a class='not_exist' href='https://whois.webtest.pl/index.php?domain=$domain' target='_blank'> $domain </a>
+    </p>
+ </div>
+            ";
+
+            } else if (isset($_POST["whois"])) {
+                return "
+ <div>
+    <a href='$url' target='_blank'> $domain</a> 
+    -
+    <a class='whois' href='https://whois.wolnadomena.pl/whois.php?domain=$domain' target='_blank'> - </a>
+</div>
+            ";
+            } else if (isset($_POST["registered"])) {
 
 
-                if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
-                    $url = "https://" . $url;
-                }
+                return "
+ <div>
+    <a href='$url' target='_blank'> $domain</a> 
+    -
+    <a class='registered' href='https://www.wolnadomena.pl/registered.php?domain=$domain' target='_blank'> - </a>
+</div>
+            ";
 
-//            if(!(strpos( $url, "https://" ) === 0)){
-//                $url = "https://" . $url
-//            }
+            } else if (isset($_POST["whois"])) {
+                return "
+ <div>
+    <a href='$url' target='_blank'> $domain</a> 
+    -
+    <a class='whois' href='https://www.wolnadomena.pl/whois.php?domain=$domain' target='_blank'> - </a>
+</div>
+            ";
+
+            } else if (isset($_POST["dns"])) {
+
+                return "
+ <div>
+    <a href='$url' target='_blank'> $domain</a> 
+    - 
+    <a class='dns' href='https://domain-dns.parkingomat.pl/get.php?domain=$domain' target='_blank'> - </a>
+</div>
+            ";
+
+            } else if (isset($_POST["multi"])) {
+
 
                 $urle = urlencode($url);
                 $url_screen = "http://webscreen.pl:3000/url/{$urle}";
-//            var_dump($url_screen);
-                $domain = get_domain_by_url($url);
 
                 return "
  <br><div>
@@ -85,356 +138,17 @@ try {
     <iframe src='$url' title='$domain'></iframe> 
 </div>
             ";
-            });
+            }
 
-            global $html;
-
-            $html = implode("<br>", $domain_nameserver_list);
-//        var_dump($domain_nameserver_list);
-//        var_dump($screen_shot_image);
 
         });
-    }
 
+        global $html;
 
-    if (isset($_POST["dns"])) {
+        $html = implode("<br>", $domain_nameserver_list);
 
-        apifunc([
-            'https://php.letjson.com/let_json.php',
-            'https://php.defjson.com/def_json.php',
-            'https://php.eachfunc.com/each_func.php',
-            'https://domain.phpfunc.com/get_domain_by_url.php',
-            'https://domain.phpfunc.com/clean_url.php',
-            'https://domain.phpfunc.com/clean_url_multiline.php',
+    });
 
-        ], function () {
-
-            // Clean URL
-            $domains = clean_url_multiline($_POST["domains"]);
-
-            if (empty($domains)) {
-                throw new Exception("domain list is empty");
-            }
-
-            $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
-
-//        var_dump($domain_list);
-//        die;
-            if (empty($domain_list)) {
-                throw new Exception("domain list is empty");
-            }
-
-            $domain_nameserver_list = each_func($domain_list, function ($url) {
-
-                if (empty($url)) return null;
-
-                $url = clean_url($url);
-
-                if (empty($url)) return null;
-
-                if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
-                    $url = "http://" . $url;
-                }
-
-                $domain = get_domain_by_url($url);
-
-                return "
- <div>
-    <a href='$url' target='_blank'> $domain</a> 
-    - 
-    <a class='dns' href='https://domain-dns.parkingomat.pl/get.php?domain=$domain' target='_blank'> - </a>
-</div>
-            ";
-            });
-
-            global $html;
-
-            $html = implode("<br>", $domain_nameserver_list);
-//        var_dump($domain_nameserver_list);
-//        var_dump($screen_shot_image);
-
-        });
-    }
-
-    if (isset($_POST["registered"])) {
-
-        apifunc([
-            'https://php.letjson.com/let_json.php',
-            'https://php.defjson.com/def_json.php',
-            'https://php.eachfunc.com/each_func.php',
-            'https://domain.phpfunc.com/get_domain_by_url.php',
-            'https://domain.phpfunc.com/clean_url.php',
-            'https://domain.phpfunc.com/clean_url_multiline.php',
-
-        ], function () {
-
-            // Clean URL
-            $domains = clean_url_multiline($_POST["domains"]);
-
-            if (empty($domains)) {
-                throw new Exception("domain list is empty");
-            }
-
-            $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
-
-//        var_dump($domain_list);
-//        die;
-            if (empty($domain_list)) {
-                throw new Exception("domain list is empty");
-            }
-
-            $domain_nameserver_list = each_func($domain_list, function ($url) {
-
-                if (empty($url)) return null;
-
-                $url = clean_url($url);
-
-                if (empty($url)) return null;
-
-                if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
-                    $url = "http://" . $url;
-                }
-
-                $domain = get_domain_by_url($url);
-
-                return "
- <div>
-    <a href='$url' target='_blank'> $domain</a> 
-    -
-    <a class='registered' href='https://www.wolnadomena.pl/registered.php?domain=$domain' target='_blank'> - </a>
-</div>
-            ";
-            });
-
-            global $html;
-
-            $html = implode("<br>", $domain_nameserver_list);
-        });
-    }
-
-
-    if (isset($_POST["whois"])) {
-
-        apifunc([
-            'https://php.letjson.com/let_json.php',
-            'https://php.defjson.com/def_json.php',
-            'https://php.eachfunc.com/each_func.php',
-            'https://domain.phpfunc.com/get_domain_by_url.php',
-            'https://domain.phpfunc.com/clean_url.php',
-            'https://domain.phpfunc.com/clean_url_multiline.php',
-
-        ], function () {
-
-            // Clean URL
-            $domains = clean_url_multiline($_POST["domains"]);
-
-            if (empty($domains)) {
-                throw new Exception("domain list is empty");
-            }
-
-            $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
-
-//        var_dump($domain_list);
-//        die;
-            if (empty($domain_list)) {
-                throw new Exception("domain list is empty");
-            }
-
-            $domain_nameserver_list = each_func($domain_list, function ($url) {
-
-                if (empty($url)) return null;
-
-                $url = clean_url($url);
-
-                if (empty($url)) return null;
-
-                if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
-                    $url = "http://" . $url;
-                }
-
-                $domain = get_domain_by_url($url);
-
-                return "
- <div>
-    <a href='$url' target='_blank'> $domain</a> 
-    -
-    <a class='whois' href='https://www.wolnadomena.pl/whois.php?domain=$domain' target='_blank'> - </a>
-</div>
-            ";
-            });
-
-            global $html;
-
-            $html = implode("<br>", $domain_nameserver_list);
-        });
-    }
-
-
-    if (isset($_POST["whois"])) {
-
-        apifunc([
-            'https://php.letjson.com/let_json.php',
-            'https://php.defjson.com/def_json.php',
-            'https://php.eachfunc.com/each_func.php',
-            'https://domain.phpfunc.com/get_domain_by_url.php',
-            'https://domain.phpfunc.com/clean_url.php',
-            'https://domain.phpfunc.com/clean_url_multiline.php',
-
-        ], function () {
-
-            // Clean URL
-            $domains = clean_url_multiline($_POST["domains"]);
-
-            if (empty($domains)) {
-                throw new Exception("domain list is empty");
-            }
-
-            $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
-
-            if (empty($domain_list)) {
-                throw new Exception("domain list is empty");
-            }
-
-            $domain_nameserver_list = each_func($domain_list, function ($url) {
-
-                if (empty($url)) return null;
-
-                $url = clean_url($url);
-
-                if (empty($url)) return null;
-
-                if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
-                    $url = "http://" . $url;
-                }
-
-                $domain = get_domain_by_url($url);
-
-                return "
- <div>
-    <a href='$url' target='_blank'> $domain</a> 
-    -
-    <a class='whois' href='https://whois.wolnadomena.pl/whois.php?domain=$domain' target='_blank'> - </a>
-</div>
-            ";
-            });
-
-            global $html;
-
-            $html = implode("<br>", $domain_nameserver_list);
-        });
-    }
-
-
-    if (isset($_POST["latency"])) {
-
-        apifunc([
-            'https://php.letjson.com/let_json.php',
-            'https://php.defjson.com/def_json.php',
-            'https://php.eachfunc.com/each_func.php',
-            'https://domain.phpfunc.com/get_domain_by_url.php',
-            'https://domain.phpfunc.com/clean_url.php',
-            'https://domain.phpfunc.com/clean_url_multiline.php',
-        ], function () {
-
-            // Clean URL
-            $domains = clean_url_multiline($_POST["domains"]);
-
-            if (empty($domains)) {
-                throw new Exception("domain list is empty");
-            }
-
-            $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
-
-//        var_dump($domain_list);
-//        die;
-            if (empty($domain_list)) {
-                throw new Exception("domain list is empty");
-            }
-
-            $domain_nameserver_list = each_func($domain_list, function ($url) {
-
-                if (empty($url)) return null;
-
-                $url = clean_url($url);
-
-                if (empty($url)) return null;
-
-                if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
-                    $url = "http://" . $url;
-                }
-
-                $domain = get_domain_by_url($url);
-
-                return "
- <div>
-    <a href='$url' target='_blank'> $domain</a> 
-    -
-    <a class='latency' href='https://www.latency.pl/latency.php?domain=$domain' target='_blank'> - </a>
-</div>
-            ";
-            });
-
-            global $html;
-
-            $html = implode("<br>", $domain_nameserver_list);
-
-        });
-    }
-
-    if (isset($_POST["not_exist"])) {
-
-        apifunc([
-            'https://php.letjson.com/let_json.php',
-            'https://php.defjson.com/def_json.php',
-            'https://php.eachfunc.com/each_func.php',
-            'https://domain.phpfunc.com/get_domain_by_url.php',
-            'https://domain.phpfunc.com/clean_url.php',
-            'https://domain.phpfunc.com/clean_url_multiline.php',
-
-        ], function () {
-
-            // Clean URL
-            $domains = clean_url_multiline($_POST["domains"]);
-
-            if (empty($domains)) {
-                throw new Exception("domain list is empty");
-            }
-
-            $domain_list = array_values(array_filter(explode(PHP_EOL, $domains)));
-
-            if (empty($domain_list)) {
-                throw new Exception("domain list is empty");
-            }
-
-            $domain_nameserver_list = each_func($domain_list, function ($url) {
-
-                if (empty($url)) return null;
-
-                $url = clean_url($url);
-
-                if (empty($url)) return null;
-
-                if (!(strpos($url, "http://") === 0) && !(strpos($url, "https://") === 0)) {
-                    $url = "http://" . $url;
-                }
-
-                $domain = get_domain_by_url($url);
-
-                return "
- <div>
-    <p>   
-        <a class='not_exist' href='https://whois.webtest.pl/index.php?domain=$domain' target='_blank'> $domain </a>
-    </p>
- </div>
-            ";
-            });
-
-            global $html;
-
-            $html = implode("<br>", $domain_nameserver_list);
-
-        });
-    }
 
 } catch (Exception $e) {
     // Set HTTP response status code to: 500 - Internal Server Error

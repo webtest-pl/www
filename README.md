@@ -1,4 +1,7 @@
-# www
+# [WebTest.pl](https://webtest.pl/)
+
++ [www.webtest.pl](https://webtest.pl/)
+
 Test domains, websites & webservices
 + whois data
 + screenshot
@@ -6,8 +9,15 @@ Test domains, websites & webservices
 + latency, ping
 
 
-+ [github.com/webtest-pl](https://github.com/webtest-pl)
-+ [www.webtest.pl](https://webtest.pl/)
+## github [github.com/webtest-pl](https://github.com/webtest-pl)
+
+https://github.com/webtest-pl/www
+
+## GIT clone
+
+https://github.com/webtest-pl/www.git
+
+    git clone https://github.com/webtest-pl/www.git
 
 
 # First Steps
@@ -99,15 +109,6 @@ Included Projects:
 
 
 
-## github
-
-https://github.com/webtest-pl/www
-
-GIT
-
-https://github.com/webtest-pl/www.git
-
-    git clone https://github.com/webtest-pl/www.git
 
 
 # project URL-s
@@ -129,12 +130,6 @@ localhost
 [http://localhost:8080/get.php?domain=apiprogram.com](http://localhost:8080/get.php?domain=apiprogram.com)
 
     curl http://localhost:8080/get.php?domain=apiprogram.com
-
-domain parkingomat.pl
-
-[https://domain-screen.parkingomat.pl/get.php?domain=apiprogram.com](https://domain-screen.parkingomat.pl/get.php?domain=apiprogram.com)
-
-
 
 ## GET REMOVE
 
