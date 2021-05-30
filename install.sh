@@ -1,2 +1,2 @@
-curl https://php.loadfunc.com/load_func.php --output load_func.php
+curl https://php.loadfunc.com/apifunc.php --output apifunc.php
 php meta.php
