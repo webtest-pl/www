@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+const stylelint = require('stylelint')
+const {readFileSync, writeFileSync} = require('fs')
+
+const files = process.argv.slice(2)
+if (files.length === 0) {
+  files.push('src/**/*.scss')
+}
