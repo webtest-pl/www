@@ -25,10 +25,13 @@ https://github.com/webtest-pl/www.git
 ## on linux
 
 ### install
-    sh .apicra\install.sh
+    sh .apicra/install
 
 ### start
-    sh .apicra\start.sh
+    sh .apicra/start
+
+### open in browser
+    sh .apicra/browser
 
 ## on windows
 
@@ -38,8 +41,10 @@ https://github.com/webtest-pl/www.git
 ### start
     .apicra\start.bat
 
-### tests
-    .apicra\test.bat
+
+### open in browser
+    .apicra\browser.bat
+
 
 # TODO:
 
