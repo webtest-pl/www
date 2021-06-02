@@ -1,0 +1,3 @@
+#!/bin/bash
+php whois.php
+php post.php
